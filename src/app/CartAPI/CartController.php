@@ -31,17 +31,30 @@ class CartController extends Controller
     protected $paymentGw;
 
     /**
+     * Repositorio de productos.
+     * Idealmente esto iría en una base de datos.
+     * @var Products $products
+     */
+    protected $products;
+
+    /**
      * Prepara el controller para el carrito.
      * Crea gateways/repository aquí para hacerlo independiente del framework.
      * @return void
      */
-    public function __construct()
+    public function __construct($service = null, $paymentGw = null)
     {
-        // Prepara gateway de pago
-        $this->paymentGw = PaymentGatewayFactory::create();
+        if (!$paymentGw) {
+            // Prepara gateway de pago
+            $this->paymentGw = PaymentGatewayFactory::create();
+        }
 
-        // Prepara el gateway, y lo guarda como servicio.
-        $this->service = new CartService(CartRepositoryFactory::create());
+        if (!$service) {
+            // Prepara el gateway, y lo guarda como servicio.
+            $this->service = new CartService(CartRepositoryFactory::create());
+        }
+
+        $this->products = new Products();
     }
 
     /**
@@ -53,13 +66,11 @@ class CartController extends Controller
     {
         $cart = (new Cart())->setId($cartId);
 
-        $products = new Products();
-
         $cartData = $this->service->list($cart);
 
         // Agregar descripciones, para no almacenarlas
         foreach ($cartData as $_key => $_data) {
-            $product = $products->get($_data["id"]);
+            $product = $this->products->get($_data["id"]);
             $cartData[$_key]["description"] = $product->getDescription();
             $cartData[$_key]["price"] = $product->getPrice();
         }
@@ -81,7 +92,7 @@ class CartController extends Controller
      */
     public function addItem(int $cartId, int $productId)
     {
-        $product = (new Products())->get($productId);
+        $product = $this->products->get($productId);
 
         $cart = (new Cart())->setId($cartId);
         $item = (new CartItem())->setProduct($product);
@@ -99,7 +110,7 @@ class CartController extends Controller
      */
     public function deleteItem($cartId, $productId)
     {
-        $product = (new Products())->get($productId);
+        $product = $this->products->get($productId);
 
         $cart = (new Cart())->setId($cartId);
         $item = (new CartItem())->setProduct($product);
@@ -117,7 +128,7 @@ class CartController extends Controller
      */
     public function deleteItemAll($cartId, $productId)
     {
-        $product = (new Products())->get($productId);
+        $product = $this->products->get($productId);
 
         $cart = (new Cart())->setId($cartId);
         $item = (new CartItem())->setProduct($product);
