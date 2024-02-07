@@ -10,9 +10,9 @@ Principalmente hay tres partes:
 
 ## Características
 
-- **DDD**: En la carpeta app/CartAPI se divide cada componente de la API en sus tres capas principales (Infrastructure => Application => Domain/).
+- **DDD**: En la carpeta src/app/CartAPI se divide cada componente de la API en sus tres capas principales (Infrastructure => Application => Domain/).
 
-- **Almacenamiento en archivos**: Para ejecutar este ejemplo no es necesaria la configuración de bases de datos, ya que el repositorio de almacenamiento es en archivos. Estos archivos se almacenan en /storage/carts.
+- **Almacenamiento en archivos**: Para ejecutar este ejemplo no es necesaria la configuración de bases de datos, ya que el repositorio de almacenamiento es en archivos. Estos archivos se almacenan en src/storage/carts.
 
 - **Pasarela de pagos**: La pasarela de pagos es Dummy, y se puede configurar con la pasarela correspondiente.
 
@@ -45,13 +45,15 @@ En caso contrario la protección CORS podrían bloquear estas peticiones AJAX.
 
 ## Tests
 
-La ejecución de los tests de integración del sistema se realiza mediante artisan:
+La ejecución de los tests de integración del sistema se realiza mediante artisan, y se encuentran en src/tests.
+
+Se pueden ejecutar entrando en /src y ejecutando:
 
 ```
 php artisan test
 ```
 
-Se comprueban que todos los endpoints realizan la función correspondiente.
+El archivo principal de test es ControllerTest.php, que comprueba todos los endpoints.
 
 Para simular los objetos con sistemas externos se tienen dos clases simuladas (mocks):
 1. CartServiceMockup
