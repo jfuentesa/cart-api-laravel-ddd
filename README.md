@@ -40,23 +40,17 @@ docker run --rm -p 80:80 cartapi
 
 ## Tests
 
+La ejecución de los tests de integración del sistema se realiza mediante artisan:
 
+```
+php artisan test
+```
 
+Se comprueban que todos los endpoints realizan la función correspondiente.
 
-
-
-## Modificación:
-
-### 1. 
-
-x
-
-### 2.
-
-x
-
-### 3.
-
+Para simular los objetos con sistemas externos se tienen dos clases simuladas (mocks):
+1. CartServiceMockup
+2. PaymentGatewayMockup
 
 ## Documentación de la API
 

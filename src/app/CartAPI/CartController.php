@@ -11,7 +11,6 @@ use App\CartAPI\Shared\Factory\CartRepositoryFactory;
 use App\CartAPI\Shared\Factory\PaymentGatewayFactory;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Contracts\Container\BindingResolutionException;
 
 /**
  * Controlador del carrito
@@ -44,12 +43,16 @@ class CartController extends Controller
      */
     public function __construct($service = null, $paymentGw = null)
     {
-        if (!$paymentGw) {
+        if ($paymentGw) {
+            $this->paymentGw = $paymentGw;
+        } else {
             // Prepara gateway de pago
             $this->paymentGw = PaymentGatewayFactory::create();
         }
 
-        if (!$service) {
+        if ($service) {
+            $this->service = $service;
+        } else {
             // Prepara el gateway, y lo guarda como servicio.
             $this->service = new CartService(CartRepositoryFactory::create());
         }
@@ -68,7 +71,7 @@ class CartController extends Controller
 
         $cartData = $this->service->list($cart);
 
-        // Agregar descripciones, para no almacenarlas
+        // Agregar descripciones, para no almacenarlas en el carrito
         foreach ($cartData as $_key => $_data) {
             $product = $this->products->get($_data["id"]);
             $cartData[$_key]["description"] = $product->getDescription();
@@ -142,7 +145,6 @@ class CartController extends Controller
      * Borra todo el carrito
      * @param mixed $cartId
      * @return JsonResponse
-     * @throws BindingResolutionException
      */
     public function clear($cartId)
     {
@@ -155,11 +157,14 @@ class CartController extends Controller
 
     /**
      * Pago del carrito
-     * @return bool
+     * @return JsonResponse
      */
     public function pay($cartId)
     {
-        $cart = (new Cart())->setId($cartId)->setData($this->service->list($cartId));
+        $cart = (new Cart())->setId($cartId);
+
+        // Toma la lista de productos desde el servicio
+        $cart->setData($this->service->list($cart));
 
         $total = $cart->calculateTotal();
 
