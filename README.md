@@ -38,6 +38,11 @@ bash ./build.sh
 docker run --rm -p 80:80 cartapi
 ```
 
+Para acceder al contenedor en local y las funciones AJAX funcionen correctamente es recomendable realizar el acceso mediante la siguiente dirección:
+http://domaincontrol.com
+
+En caso contrario la protección CORS podrían bloquear estas peticiones AJAX.
+
 ## Tests
 
 La ejecución de los tests de integración del sistema se realiza mediante artisan:
